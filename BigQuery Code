@@ -1,0 +1,159 @@
+Q1&Q2:
+SELECT *
+FROM `coronavirus-422117.Coronavirus.Covid`
+WHERE Province IS NULL
+   OR Country_Region IS NULL
+   OR Latitude IS NULL
+   OR Longitude IS NULL
+   OR Confirmed IS NULL
+   OR Deaths IS NULL
+   OR Recovered IS NULL;
+
+UPDATE `coronavirus-422117.Coronavirus.Covid`
+SET 
+  Country_Region = COALESCE(Country_Region, 'Unknown'),  -- Default text for missing text
+  Province = COALESCE(Province, 'Unknown'),  -- Default text for missing text
+  Latitude = COALESCE(Latitude, 0.0),  -- Default zero for missing numeric
+  Longitude = COALESCE(Longitude, 0.0),  -- Default zero for missing numeric
+  Confirmed = COALESCE(Confirmed, 0),  -- Default zero for missing integer
+  Deaths = COALESCE(Deaths, 0),  -- Default zero for missing integer
+  Recovered = COALESCE(Recovered, 0)  -- Assuming the correct field name is 'Recovered'
+WHERE 
+  Province IS NULL
+  OR Country_Region IS NULL
+  OR Latitude IS NULL
+  OR Longitude IS NULL
+  OR Confirmed IS NULL
+  OR Deaths IS NULL
+  OR Recovered IS NULL;
+
+Q3:
+SELECT 
+COUNT(*) AS total_rows
+FROM `coronavirus-422117.Coronavirus.Covid` ;
+
+Q4:
+SELECT MIN(Date) AS earliest_start_date, MAX(Date) AS latest_end_date
+FROM `coronavirus-422117.Coronavirus.Covid` 
+
+Q5:
+SELECT COUNT(DISTINCT EXTRACT(YEAR FROM Date) || '-' || EXTRACT(MONTH FROM Date)) AS distinct_month_years
+FROM `coronavirus-422117.Coronavirus.Covid` 
+
+Q6:
+SELECT 
+    EXTRACT(YEAR FROM Date) AS Year, 
+    EXTRACT(MONTH FROM Date) AS Month,
+    AVG(Confirmed) AS AvgConfirmed, 
+    AVG(Deaths) AS AvgDeaths,
+    AVG(Recovered) AS AvgRecovered
+FROM `coronavirus-422117.Coronavirus.Covid` 
+GROUP BY
+    EXTRACT(YEAR FROM Date), EXTRACT(MONTH FROM Date)
+ORDER BY
+    Year, Month;
+
+
+Q7:
+SELECT  
+    EXTRACT(YEAR FROM Date) AS Year, 
+    EXTRACT(MONTH FROM Date) AS Month,
+    MAX(Confirmed) AS MostFrequentConfirmed, 
+    MAX(Deaths) AS MostFrequentDeaths,
+    MAX(Recovered) AS MostFrequentRecovered
+FROM `coronavirus-422117.Coronavirus.Covid`
+GROUP BY Year, Month
+ORDER BY Year, Month;
+
+
+Q8:
+SELECT  
+    EXTRACT(YEAR FROM Date) AS Year,
+    EXTRACT(MONTH FROM Date) AS Month,
+    MIN(Confirmed) AS MinConfirmed,
+    MIN(Deaths) AS MinDeaths,
+    MIN(Recovered) AS MinRecovered
+FROM `coronavirus-422117.Coronavirus.Covid` 
+GROUP BY Year, Month
+ORDER BY Year, Month;
+
+Q9:
+SELECT  
+    EXTRACT(YEAR FROM Date) AS Year,
+    MAX(Confirmed) AS MaxConfirmed,
+    MAX(Deaths) AS MaxDeaths,
+    MAX(Recovered) AS MaxRecovered
+FROM `coronavirus-422117.Coronavirus.Covid` 
+GROUP BY Year
+ORDER BY Year
+
+Q10:
+SELECT  
+    EXTRACT(YEAR FROM Date) AS Year,
+    EXTRACT(MONTH FROM Date) AS Month,
+    SUM(Confirmed) AS TotalConfirmed,
+    SUM(Deaths) AS TotalDeaths,
+    SUM(Recovered) AS TotalRecovered
+FROM `coronavirus-422117.Coronavirus.Covid` 
+GROUP BY Year, Month
+ORDER BY Year, Month;
+
+Q11:
+SELECT  
+    EXTRACT(YEAR FROM Date) AS Year,
+    EXTRACT(MONTH FROM Date) AS Month,
+    SUM(Confirmed) AS Total_Confirmed,
+    AVG(Confirmed) AS Avg_Confirmed,
+    VARIANCE(Confirmed) AS Variance_Confirmed,
+    STDDEV(Confirmed) AS StdDev_Confirmed
+FROM `coronavirus-422117.Coronavirus.Covid` 
+GROUP BY Year, Month
+ORDER BY Year, Month;
+
+Q12:
+SELECT  
+    EXTRACT(YEAR FROM Date) AS Year,
+    EXTRACT(MONTH FROM Date) AS Month,
+    SUM(Deaths) AS Total_Deaths,
+    AVG(Deaths) AS Avg_Deaths,
+    VARIANCE(Deaths) AS Variance_Deaths,
+    STDDEV(Deaths) AS StdDev_Deaths
+FROM `coronavirus-422117.Coronavirus.Covid` 
+GROUP BY Year, Month
+ORDER BY Year, Month;
+
+Q13:
+SELECT  
+    EXTRACT(YEAR FROM Date) AS Year,
+    EXTRACT(MONTH FROM Date) AS Month,
+    SUM(Recovered) AS Total_Recovered,
+    AVG(Recovered) AS Avg_Recovered,
+    VARIANCE(Recovered) AS Variance_Recovered,
+    STDDEV(Recovered) AS StdDev_Recovered
+FROM `coronavirus-422117.Coronavirus.Covid` 
+GROUP BY Year, Month
+ORDER BY Year, Month;
+
+Q14:
+SELECT Country_Region AS `Country Region`, 
+  SUM(Confirmed) AS Total_Confirmed
+FROM `coronavirus-422117.Coronavirus.Covid`
+GROUP BY Country_Region
+ORDER BY Total_Confirmed DESC
+LIMIT 1;
+
+Q15:
+SELECT Country_Region AS `Country Region`, 
+  SUM(Deaths) AS Total_Deaths
+FROM `coronavirus-422117.Coronavirus.Covid`
+GROUP BY Country_Region-- Aggregate by each region
+ORDER BY Total_Deaths ASC
+LIMIT 1; -- Returns only the top record
+
+Q16:
+SELECT Country_Region AS `Country Region`, 
+  SUM(Recovered) AS Total_Recovered
+FROM `coronavirus-422117.Coronavirus.Covid`
+GROUP BY Country_Region-- Aggregate by each region
+ORDER BY Total_Recovered DESC
+LIMIT 5; -- Returns only the top 5 record
